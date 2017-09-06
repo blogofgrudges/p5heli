@@ -6,9 +6,9 @@ var currentGap;
 var bounds;
 var boundWidth;
 var blockers;
-var offsetCounter;
+var x;
 var offsetScaleX;
-var offsetScaleY;
+var scaleY;
 var jitter;
 var maxJitter;
 var score;
@@ -20,6 +20,8 @@ var gapPattern;
 var gapPatterns = [];
 var gap;
 var offset;
+var version = "0.6";
+var debug = true;
 
 function setup()
 {
@@ -30,9 +32,9 @@ function setup()
     minimumGap = 300;
     currentGap = 680;
     boundWidth = 40;
-    offsetCounter = 0;
+    x = 0;
     offsetScaleX = 200;
-    offsetScaleY = 100;    
+    scaleY = 50;    
     noStroke();    
     maxJitter = 20;
     score = 0;
@@ -56,9 +58,9 @@ function resetSketch()
     minimumGap = 300;
     currentGap = 680;
     boundWidth = 40;
-    offsetCounter = 0;
+    x = 0;
     offsetScaleX = 200;
-    offsetScaleY = 50;    
+    scaleY = 50;    
     noStroke();    
     maxJitter = 20;
     scores.push(score);
@@ -116,16 +118,17 @@ function draw()
     //draw any text
     textSize(32);
     text("SCORE: " + score, 10, 30);
-    text("HIGH SCORE: " + hiscore, 500, 30);    
-}
-
-function changePattern(currentPattern, patterns)
-{
-    currentPattern++;
-    if(currentPattern == patterns.length)
+    text("HIGH SCORE: " + hiscore, 500, 30);   
+    
+    //debug!
+    if(debug)
     {
-        currentPattern = 0;
-    }
+        textSize(10);
+        text("boundary pattern: " + boundPattern, 500, 70);   
+        text("gap pattern: " + gapPattern, 500, 90);      
+        text("change in: " + (TWO_PI - x), 500, 110);       
+        text("version: " + version, 500, 130);     
+    }    
 }
 
 function obstacleManager(obstacles)
@@ -163,14 +166,15 @@ function levelBounds()
     }      
     
     //the offset period is 2 pi by offsetScaleX
-    offsetCounter += (TWO_PI/offsetScaleX);
+    x += (TWO_PI/offsetScaleX);
 
-    //reset the offsetCounter once it exceeds two pi
-    if(offsetCounter > TWO_PI)
+    //reset the x once it exceeds two pi
+    if(x > TWO_PI)
     {
-        offsetCounter = 0;
-        changePattern(boundPattern, boundPatterns);
-        changePattern(gapPattern, gapPatterns);                
+        x = 0;
+        boundPattern = random(boundPatterns);
+        gapPattern = random(gapPatterns);      
+        console.log("BP: " + boundPattern + "GP: " + gapPattern);
     }
 
     //add a jitter value in to make it look less uniform
@@ -180,35 +184,35 @@ function levelBounds()
     {
         case 0:
             offsetScaleX = 200;
-            offset = jitter + offsetScaleY * ((0.75*sin(offsetCounter)) + sin(2*offsetCounter) + (0.3*sin(3*offsetCounter)));
+            boundYPos = jitter + scaleY * ((0.75*sin(x)) + sin(2*x) + (0.3*sin(3*x)));
         break;
         case 1:
             offsetScaleX = 100;                
-            offset = jitter + offsetScaleY * (sin(offsetCounter) + (0.3*sin(3*offsetCounter)));          
+            boundYPos = jitter + scaleY * (sin(x) + (0.3*sin(3*x)));          
         break;
         case 2:
             offsetScaleX = 200;                   
-            offset = jitter + offsetScaleY * ((0.75*sin(offsetCounter)) + (sin(4*offsetCounter)));          
+            boundYPos = jitter + scaleY * ((0.75*sin(x)) + (sin(4*x)));          
         break;                
         case 3:
             offsetScaleX = 300;                   
-            offset = jitter + offsetScaleY * ((0.75*sin(6*offsetCounter)) + (sin(4*offsetCounter)));          
+            boundYPos = jitter + scaleY * ((0.75*sin(6*x)) + (sin(4*x)));          
         break;    
         case 4:
             offsetScaleX = 400;                   
-            offset = jitter + offsetScaleY * ((0.55*sin(10*offsetCounter)) + (sin(2*offsetCounter)));          
+            boundYPos = jitter + scaleY * ((0.55*sin(10*x)) + (sin(2*x)));          
         break;                    
     }  
-
+    
     switch(gapPattern)
     {
         case 0:
-            gap = currentGap + (offsetScaleY * sin(offsetCounter) * 0.75);                    
+            gap = currentGap + (scaleY * sin(8*x));                    
         break;
         case 1:
-            gap = currentGap + (offsetScaleY * sin(offsetCounter) * 0.3);                    
+            gap = currentGap + (scaleY * sin(x));                    
         break;
     }              
     
-    bounds.push(new Bound(width, offset, gap));    
+    bounds.push(new Bound(width, boundYPos, 0, height, gap));    
 }

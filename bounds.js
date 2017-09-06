@@ -1,24 +1,27 @@
-function Bound(x,offset,gap)
+function Bound(x, y, roofY, floorY, gap)
 {
-    //each bound is made up of two rectanges roof and floor
-    this.width = boundWidth;
     this.x = x;
-    this.yOffset = offset;
-    this.isNeeded = true;
+    this.y = y;
+    this.roofY = roofY;
+    this.floorY = floorY;    
+    this.sizeX = boundWidth;
+    this.sizeY = (this.floorY - gap) / 2;
     
-    //height of each rectangle
-    this.height = (height - gap) / 2;
-    
-    this.roofPosition = createVector(this.x,0);
-    this.floorPosition = createVector(this.x,(height-this.height-this.yOffset));    
+    this.roofSizeY = this.sizeY + this.y;
+    this.floorSizeY = this.sizeY - this.y;
+    this.roofPosition = createVector(this.x, this.roofY);
+    this.floorPosition = createVector(this.x, this.floorY - this.floorSizeY);    
 
+    this.isNeeded = true;    
+    
     this.velocity = createVector(-8,0);
     
+    //probably a better way to do this
     this.collides = function(heli)
     {
-        if((heli.position.x > this.roofPosition.x) && (heli.position.x < this.roofPosition.x + this.width))
+        if((heli.position.x > this.roofPosition.x) && (heli.position.x < this.roofPosition.x + this.sizeX))
         {    
-            if(heli.position.y < (this.height-this.yOffset) || heli.position.y > height - (this.height + this.yOffset))
+            if(heli.position.y < (this.roofY + this.roofSizeY) || heli.position.y > this.floorPosition.y)
             {
                 return true;
             }
@@ -38,9 +41,7 @@ function Bound(x,offset,gap)
     
     this.display = function()
     {
-        rect(this.roofPosition.x, this.roofPosition.y, this.width, this.height-this.yOffset);
-        rect(this.floorPosition.x, this.floorPosition.y, this.width, this.height+this.yOffset);        
+        rect(this.roofPosition.x, this.roofPosition.y, this.sizeX, this.roofSizeY);
+        rect(this.floorPosition.x, this.floorPosition.y, this.sizeX, this.floorSizeY);        
     }
-    
-    
 }

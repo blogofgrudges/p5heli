@@ -10,6 +10,7 @@ function Blocker(x, y, sizeY)
     this.position = createVector(this.x,this.y);
     this.velocity = createVector(-8,0);
     
+    //this can probably be done better
     this.collides = function(heli)
     {
         if((heli.position.x > this.position.x) && (heli.position.x < this.position.x + this.width))
