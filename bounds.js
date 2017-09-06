@@ -12,7 +12,6 @@ function Bound(x,offset,gap)
     this.roofPosition = createVector(this.x,0);
     this.floorPosition = createVector(this.x,(height-this.height-this.yOffset));    
 
-    // this.position = createVector(x,y);
     this.velocity = createVector(-8,0);
     
     this.collides = function(heli)

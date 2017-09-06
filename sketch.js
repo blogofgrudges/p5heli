@@ -38,7 +38,7 @@ function setup()
     score = 0;
     hiscore = 0;
     bounds = [];
-    boundPatterns = [0,1,2];
+    boundPatterns = [0,1,2,3,4];
     gapPatterns = [0,1];    
     blockers = [];
     boundPattern = 0;
@@ -66,7 +66,7 @@ function resetSketch()
     hiscore = Math.max(...scores);
     score = 0;
     boundPattern = 0;
-    boundPatterns = [0,1,2];    
+    boundPatterns = [0,1,2,3,4];    
     gapPattern = 0;
     gapPatterns = [0,1];        
     bounds = [];
@@ -120,18 +120,26 @@ function draw()
             
             switch(boundPattern)
             {
-                //bumpy
                 case 0:
+                    offsetScaleX = 200;
                     offset = jitter + offsetScaleY * ((0.75*sin(offsetCounter)) + sin(2*offsetCounter) + (0.3*sin(3*offsetCounter)));
                 break;
-                //bumpy with flat
                 case 1:
+                    offsetScaleX = 100;                
                     offset = jitter + offsetScaleY * (sin(offsetCounter) + (0.3*sin(3*offsetCounter)));          
                 break;
-                //really bumpy
                 case 2:
+                    offsetScaleX = 200;                   
                     offset = jitter + offsetScaleY * ((0.75*sin(offsetCounter)) + (sin(4*offsetCounter)));          
                 break;                
+                case 3:
+                    offsetScaleX = 300;                   
+                    offset = jitter + offsetScaleY * ((0.75*sin(6*offsetCounter)) + (sin(4*offsetCounter)));          
+                break;    
+                case 4:
+                    offsetScaleX = 400;                   
+                    offset = jitter + offsetScaleY * ((0.55*sin(10*offsetCounter)) + (sin(2*offsetCounter)));          
+                break;                    
             }  
       
             switch(gapPattern)
@@ -142,7 +150,7 @@ function draw()
                 break;
                 //bumpy
                 case 1:
-                    gap = currentGap + (offsetScaleY * sin(5 * offsetCounter) * 0.75);                    
+                    gap = currentGap + (offsetScaleY * sin(offsetCounter) * 0.3);                    
                 break;
             }              
             
