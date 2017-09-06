@@ -202,11 +202,9 @@ function levelBounds()
 
     switch(gapPattern)
     {
-        //gentle
         case 0:
             gap = currentGap + (offsetScaleY * sin(offsetCounter) * 0.75);                    
         break;
-        //bumpy
         case 1:
             gap = currentGap + (offsetScaleY * sin(offsetCounter) * 0.3);                    
         break;

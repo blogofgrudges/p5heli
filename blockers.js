@@ -1,13 +1,11 @@
-function Blocker(x,y,height)
-{
-    //each bound is made up of one rectangle
-    this.width = boundWidth;
+function Blocker(x, y, sizeY)
+{   
     this.x = x;
-    this.y = y;
+    this.y = y;    
+    this.sizeX = boundWidth;
+    this.sizeY = sizeY;
+    
     this.isNeeded = true;
-
-    //height of each rectangle
-    this.height = height;
     
     this.position = createVector(this.x,this.y);
     this.velocity = createVector(-8,0);
@@ -16,7 +14,7 @@ function Blocker(x,y,height)
     {
         if((heli.position.x > this.position.x) && (heli.position.x < this.position.x + this.width))
         {    
-            if(heli.position.y > this.position.y && heli.position.y < this.position.y + this.height)
+            if(heli.position.y > this.position.y && heli.position.y < this.position.y + this.sizeY)
             {
                 return true;
             }
@@ -35,6 +33,6 @@ function Blocker(x,y,height)
     
     this.display = function()
     {
-        rect(this.position.x, this.position.y, this.width, this.height);   
+        rect(this.position.x, this.position.y, this.width, this.sizeY);   
     }
 }

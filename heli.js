@@ -1,4 +1,4 @@
-function Heli(x,y)
+function Heli(x, y)
 {
     this.position = createVector(x,y);
     this.velocity = createVector(0,0);
