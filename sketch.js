@@ -81,80 +81,16 @@ function draw()
     if(!gameOver)
     {
         //check to see if there is player input
-        if(mouseIsPressed)
-        {
-            if(isInBounds(this.mouseX, this.mouseY))
-            {
-                heli.applyForce(boost);
-            }
-        }
+        handleInputs();
         
         //apply gravity and move the player
         heli.applyForce(gravity);
         heli.physics();
         
-        //add more level bounds
         if(frameCount % 5 == 0)
         {
-            //currentGap start out large and shrinks down to the minimum gap
-            if(currentGap > minimumGap)
-            {
-                currentGap -= 5;
-            }      
-            
-            //the offset period is 2 pi and the minimum increment is the offsetScaleX
-            offsetCounter += (TWO_PI/offsetScaleX);
-      
-            //reset the offsetCounter once it exceeds two pi
-            if(offsetCounter > TWO_PI)
-            {
-                offsetCounter = 0;
-                changeBoundPattern();
-                changeGapPattern();
-            }
-
-            //console.log(offsetCounter*(180/PI));     
-
-            //add a jitter value in to make it look less uniform
-            jitter = random(maxJitter);
-            
-            switch(boundPattern)
-            {
-                case 0:
-                    offsetScaleX = 200;
-                    offset = jitter + offsetScaleY * ((0.75*sin(offsetCounter)) + sin(2*offsetCounter) + (0.3*sin(3*offsetCounter)));
-                break;
-                case 1:
-                    offsetScaleX = 100;                
-                    offset = jitter + offsetScaleY * (sin(offsetCounter) + (0.3*sin(3*offsetCounter)));          
-                break;
-                case 2:
-                    offsetScaleX = 200;                   
-                    offset = jitter + offsetScaleY * ((0.75*sin(offsetCounter)) + (sin(4*offsetCounter)));          
-                break;                
-                case 3:
-                    offsetScaleX = 300;                   
-                    offset = jitter + offsetScaleY * ((0.75*sin(6*offsetCounter)) + (sin(4*offsetCounter)));          
-                break;    
-                case 4:
-                    offsetScaleX = 400;                   
-                    offset = jitter + offsetScaleY * ((0.55*sin(10*offsetCounter)) + (sin(2*offsetCounter)));          
-                break;                    
-            }  
-      
-            switch(gapPattern)
-            {
-                //gentle
-                case 0:
-                    gap = currentGap + (offsetScaleY * sin(offsetCounter) * 0.75);                    
-                break;
-                //bumpy
-                case 1:
-                    gap = currentGap + (offsetScaleY * sin(offsetCounter) * 0.3);                    
-                break;
-            }              
-            
-            bounds.push(new Bound(width, offset, gap));      
+            //add more level bounds
+            levelBounds();
             score++;
         }
         
@@ -167,51 +103,9 @@ function draw()
         }
     }
     
-    for(var i=bounds.length-1; i>=0; i--)
-    {
-        if(!gameOver)
-        {
-            bounds[i].move();
-        }
-        
-        push();
-        fill(102, 255, 102);
-        bounds[i].display();
-        pop();
-        
-        if(bounds[i].collides(heli))
-        {
-            gameOver = true;
-        }
-        
-        if(!bounds[i].isNeeded)
-        {
-            bounds.splice(i,1);
-        }
-    }
-    
-    for(var i=blockers.length-1; i>=0; i--)
-    {
-        if(!gameOver)
-        {
-            blockers[i].move();
-        }
-        
-        push();
-        fill(102, 255, 102);
-        blockers[i].display();
-        pop();
-        
-        if(blockers[i].collides(heli))
-        {
-            gameOver = true;
-        }        
-        
-        if(!blockers[i].isNeeded)
-        {
-            blockers.splice(i,1);
-        }        
-    }    
+    //manage all of the obstacles
+    obstacleManager(bounds);   
+    obstacleManager(blockers);
     
     //draw the player
     push();
@@ -219,38 +113,104 @@ function draw()
     heli.display();
     pop();
     
+    //draw any text
     textSize(32);
     text("SCORE: " + score, 10, 30);
     text("HIGH SCORE: " + hiscore, 500, 30);    
 }
 
-function isInBounds(x, y)
+function changePattern(currentPattern, patterns)
 {
-    //check to make sure the point that was clicked on is within the canvas bounds
-    if((x >= 0 && x <= width) && 
-       (y >= 0 && y <= height))
+    currentPattern++;
+    if(currentPattern == patterns.length)
     {
-        return true;
+        currentPattern = 0;
     }
-    return false;
 }
 
-function changeBoundPattern()
+function obstacleManager(obstacles)
 {
-    boundPattern++;
-    if(boundPattern == boundPatterns.length)
+    for(var i=obstacles.length-1; i>=0; i--)
     {
-        boundPattern = 0;
-    }
-    console.log("bound = " + boundPattern);    
+        if(!gameOver)
+        {
+            obstacles[i].move();
+        }
+        
+        push();
+        fill(102, 255, 102);
+        obstacles[i].display();
+        pop();
+        
+        if(obstacles[i].collides(heli))
+        {
+            gameOver = true;
+        }        
+        
+        if(!obstacles[i].isNeeded)
+        {
+            obstacles.splice(i,1);
+        }        
+    }  
 }
 
-function changeGapPattern()
+function levelBounds()
 {
-    gapPattern++;
-    if(gapPattern == gapPatterns.length)
+    //currentGap start out large and shrinks down to the minimum gap
+    if(currentGap > minimumGap)
     {
-        gapPattern = 0;
+        currentGap -= 5;
+    }      
+    
+    //the offset period is 2 pi by offsetScaleX
+    offsetCounter += (TWO_PI/offsetScaleX);
+
+    //reset the offsetCounter once it exceeds two pi
+    if(offsetCounter > TWO_PI)
+    {
+        offsetCounter = 0;
+        changePattern(boundPattern, boundPatterns);
+        changePattern(gapPattern, gapPatterns);                
     }
-    console.log("gap = " + gapPattern);    
+
+    //add a jitter value in to make it look less uniform
+    jitter = random(maxJitter);
+    
+    switch(boundPattern)
+    {
+        case 0:
+            offsetScaleX = 200;
+            offset = jitter + offsetScaleY * ((0.75*sin(offsetCounter)) + sin(2*offsetCounter) + (0.3*sin(3*offsetCounter)));
+        break;
+        case 1:
+            offsetScaleX = 100;                
+            offset = jitter + offsetScaleY * (sin(offsetCounter) + (0.3*sin(3*offsetCounter)));          
+        break;
+        case 2:
+            offsetScaleX = 200;                   
+            offset = jitter + offsetScaleY * ((0.75*sin(offsetCounter)) + (sin(4*offsetCounter)));          
+        break;                
+        case 3:
+            offsetScaleX = 300;                   
+            offset = jitter + offsetScaleY * ((0.75*sin(6*offsetCounter)) + (sin(4*offsetCounter)));          
+        break;    
+        case 4:
+            offsetScaleX = 400;                   
+            offset = jitter + offsetScaleY * ((0.55*sin(10*offsetCounter)) + (sin(2*offsetCounter)));          
+        break;                    
+    }  
+
+    switch(gapPattern)
+    {
+        //gentle
+        case 0:
+            gap = currentGap + (offsetScaleY * sin(offsetCounter) * 0.75);                    
+        break;
+        //bumpy
+        case 1:
+            gap = currentGap + (offsetScaleY * sin(offsetCounter) * 0.3);                    
+        break;
+    }              
+    
+    bounds.push(new Bound(width, offset, gap));    
 }
