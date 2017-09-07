@@ -13,7 +13,7 @@ function Blocker(x, y, sizeY)
     //this can probably be done better
     this.collides = function(heli)
     {
-        if((heli.position.x > this.position.x) && (heli.position.x < this.position.x + this.width))
+        if((heli.position.x > this.position.x) && (heli.position.x < this.position.x + this.sizeX))
         {    
             if(heli.position.y > this.position.y && heli.position.y < this.position.y + this.sizeY)
             {
@@ -34,6 +34,6 @@ function Blocker(x, y, sizeY)
     
     this.display = function()
     {
-        rect(this.position.x, this.position.y, this.width, this.sizeY);   
+        rect(this.position.x, this.position.y, this.sizeX, this.sizeY);   
     }
 }

@@ -97,11 +97,10 @@ function draw()
         }
         
         //add a blocker bar
-        if(frameCount % 100 == 0 && currentGap <= 400)
+        if(frameCount % 100 == 0)
         {
-            var top = ((height - gap)/2) - offset;
-            var bottom = height - ((height - gap)/2) - offset;
-            blockers.push(new Blocker(width, random(top-50, bottom+50), currentGap/3));         
+            var yPos = (height/2) + random(-100, 200) - 100;
+            blockers.push(new Blocker(width, yPos, 100));         
         }
     }
     
@@ -126,7 +125,9 @@ function draw()
         textSize(10);
         text("boundary pattern: " + boundPattern, 500, 70);   
         text("gap pattern: " + gapPattern, 500, 90);      
-        text("change in: " + (TWO_PI - x), 500, 110);       
+        text("change in: " + (TWO_PI - x), 500, 110);
+        text("bounds l: " + bounds.length, 600, 70);      
+        text("block l: " + blockers.length, 600, 90);           
         text("version: " + version, 500, 130);     
     }    
 }
