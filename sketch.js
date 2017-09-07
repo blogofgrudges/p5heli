@@ -22,6 +22,9 @@ var gap;
 var offset;
 var version = "0.6";
 var debug = true;
+var backImg;
+var backGround;
+var backs;
 
 function setup()
 {
@@ -48,6 +51,10 @@ function setup()
     gameOver = false;
     var button = createButton("RESET");
     button.mousePressed(resetSketch);
+    backImg = loadImage("back.png");
+    backGround = new Background(0, 0, backImg);
+    backs = [];
+    backs.push(backGround);
 }
 
 function resetSketch()
@@ -74,12 +81,16 @@ function resetSketch()
     bounds = [];
     blockers = [];    
     gameOver = false;    
+    backGround = new Background(0, 0, backImg);    
+    backs = [];
+    backs.push(backGround);    
 }
 
 function draw()
 {
-    background(51);
-    
+    background(51);       
+    backgroundManager(backs);
+
     if(!gameOver)
     {
         //check to see if there is player input
@@ -130,6 +141,36 @@ function draw()
         text("block l: " + blockers.length, 600, 90);           
         text("version: " + version, 500, 130);     
     }    
+}
+
+function backgroundManager(backgrounds)
+{
+    for(var i=backgrounds.length-1; i>=0; i--)
+    {
+        if(!gameOver)
+        {
+            backgrounds[i].move();
+        }
+        
+        push();
+        fill(102, 255, 102);
+        backgrounds[i].display();
+        pop();        
+        
+        if(!backgrounds[i].isNeeded)
+        {
+            backgrounds.splice(i,1);
+        }    
+
+        if(i == backgrounds.length-1)
+        {
+            if((backgrounds[i].position.x + 1280) < width)
+            {
+                console.log(backgrounds.length);
+                backgrounds.push(new Background(width, 0, backImg));    
+            }
+        }
+    }  
 }
 
 function obstacleManager(obstacles)
