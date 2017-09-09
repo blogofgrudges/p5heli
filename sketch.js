@@ -20,11 +20,13 @@ var gapPattern;
 var gapPatterns = [];
 var gap;
 var offset;
-var version = "0.6";
+var version = "0.7";
 var debug = true;
 var backImg;
+var backImg2;
 var backGround;
 var backs;
+var allBgImgs = [];
 
 function setup()
 {
@@ -52,9 +54,12 @@ function setup()
     var button = createButton("RESET");
     button.mousePressed(resetSketch);
     backImg = loadImage("back.png");
+    backImg2 = loadImage("back2.png");
     backGround = new Background(0, 0, backImg);
     backs = [];
     backs.push(backGround);
+    allBgImgs.push(backImg);
+    allBgImgs.push(backImg2);
 }
 
 function resetSketch()
@@ -164,10 +169,10 @@ function backgroundManager(backgrounds)
 
         if(i == backgrounds.length-1)
         {
-            if((backgrounds[i].position.x + 1280) < width)
+            if((backgrounds[i].position.x + width) < width)
             {
                 console.log(backgrounds.length);
-                backgrounds.push(new Background(width, 0, backImg));    
+                backgrounds.push(new Background(width, 0, random(allBgImgs)));    
             }
         }
     }  
