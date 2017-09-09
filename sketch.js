@@ -21,7 +21,7 @@ var gapPatterns = [];
 var gap;
 var offset;
 var version = "0.7";
-var debug = true;
+var debug = false;
 var backImg;
 var backImg2;
 var backGround;
@@ -53,6 +53,8 @@ function setup()
     gameOver = false;
     var button = createButton("RESET");
     button.mousePressed(resetSketch);
+    var buttonDebug = createButton("DEBUG");
+    buttonDebug.mousePressed(debugOnOff);    
     backImg = loadImage("back.png");
     backImg2 = loadImage("back2.png");
     backGround = new Background(0, 0, backImg);
@@ -262,4 +264,16 @@ function levelBounds()
     }              
     
     bounds.push(new Bound(width, boundYPos, 0, height, gap));    
+}
+
+function debugOnOff()
+{
+    if(debug)
+    {
+        debug = false;
+    }
+    else
+    {
+        debug = true;
+    }
 }
